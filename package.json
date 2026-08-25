@@ -1,15 +1,19 @@
 {
-  "name": "skycoin4444-module",
-  "version": "1.0.0",
-  "description": "Production-grade SKYCOIN4444 module",
-  "main": "dist/index.js",
+  "name": "@skycoin/classroom",
+  "version": "1.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Bounded SKYCOIN4444 classroom membership domain core",
   "scripts": {
-    "build": "tsc || echo 'Build completed'",
-    "test": "echo 'Tests passing'",
-    "lint": "echo 'Linting passed'",
-    "start": "node dist/index.js"
+    "check": "tsc -p tsconfig.product.json --noEmit",
+    "build": "tsc -p tsconfig.product.json",
+    "test": "npm run build && node --test dist-product/test/*.test.js",
+    "verify": "npm run check && npm test && npm audit --omit=dev --audit-level=high"
   },
-  "keywords": ["skycoin4444", "production"],
-  "author": "SKYCOIN4444",
-  "license": "MIT"
+  "keywords": ["skycoin4444", "education", "classroom"],
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^7.0.2"
+  }
 }
