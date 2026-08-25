@@ -29,3 +29,12 @@ test("capacity and identifiers are enforced", () => {
   assert.throws(() => classroom.join("user:learner", "learner", 2), /capacity/);
   assert.throws(() => classroom.hasMember("x"), /subjectId/);
 });
+
+test("runtime callers cannot inject unsupported classroom roles", () => {
+  const classroom = new Classroom({ classroomId: "class:005", title: "Roles", ownerSubjectId: "user:teacher" }, 1);
+  assert.throws(
+    () => classroom.join("user:learner", "administrator" as never, 2),
+    /role must be instructor or learner/,
+  );
+  assert.equal(classroom.hasMember("user:learner"), false);
+});
