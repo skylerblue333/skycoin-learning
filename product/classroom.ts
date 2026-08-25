@@ -38,6 +38,11 @@ function safeTitle(input: string): string {
   return title;
 }
 
+function safeRole(value: unknown): ClassroomRole {
+  if (value !== "instructor" && value !== "learner") throw new TypeError("role must be instructor or learner");
+  return value;
+}
+
 export class Classroom {
   readonly #classroomId: string;
   readonly #title: string;
@@ -56,14 +61,15 @@ export class Classroom {
 
   join(subjectId: string, role: ClassroomRole = "learner", now = Date.now()): ClassroomMember {
     const id = safeId("subjectId", subjectId);
-    if (id === this.#ownerSubjectId && role !== "instructor") throw new Error("owner role cannot be downgraded");
+    const normalizedRole = safeRole(role);
+    if (id === this.#ownerSubjectId && normalizedRole !== "instructor") throw new Error("owner role cannot be downgraded");
     const existing = this.#members.get(id);
     if (existing) {
-      if (existing.role !== role) throw new Error("member already exists with a different role");
+      if (existing.role !== normalizedRole) throw new Error("member already exists with a different role");
       return existing;
     }
     if (this.#members.size >= this.#capacity) throw new Error("classroom capacity reached");
-    const member = Object.freeze({ subjectId: id, role, joinedAt: safeTime(now) });
+    const member = Object.freeze({ subjectId: id, role: normalizedRole, joinedAt: safeTime(now) });
     this.#members.set(id, member);
     return member;
   }
